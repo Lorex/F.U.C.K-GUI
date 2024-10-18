@@ -2,42 +2,36 @@
   <q-layout view="lHh Lpr lFf">
     <q-header elevated>
       <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="toggleLeftDrawer"
-        />
-
-        <q-toolbar-title>
-          Quasar App
+        <q-toolbar-title class="row items-center no-wrap">
+          Project F.U.C.K. WebUI
+          <q-tabs class="q-ml-md">
+            <q-route-tab to="/" :label="$t('home')" icon="home" />
+            <q-route-tab to="/config-builder" :label="$t('configBuilder')" icon="build" />
+          </q-tabs>
         </q-toolbar-title>
-
-        <div>Quasar v{{ $q.version }}</div>
+        <q-btn flat round :icon="$q.dark.isActive ? 'light_mode' : 'dark_mode'" @click="toggleDarkMode" />
+        <q-btn-dropdown flat :label="currentLang" icon="language">
+          <q-list>
+            <q-item clickable v-close-popup @click="changeLang('en-US')">
+              <q-item-section avatar>
+                <q-icon name="flag" color="primary" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>English</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item clickable v-close-popup @click="changeLang('zh-TW')">
+              <q-item-section avatar>
+                <q-icon name="flag" color="primary" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>繁體中文</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-btn-dropdown>
       </q-toolbar>
     </q-header>
-
-    <q-drawer
-      v-model="leftDrawerOpen"
-      show-if-above
-      bordered
-    >
-      <q-list>
-        <q-item-label
-          header
-        >
-          Essential Links
-        </q-item-label>
-
-        <EssentialLink
-          v-for="link in linksList"
-          :key="link.title"
-          v-bind="link"
-        />
-      </q-list>
-    </q-drawer>
 
     <q-page-container>
       <router-view />
@@ -45,62 +39,38 @@
   </q-layout>
 </template>
 
-<script setup>
-import { ref } from 'vue'
-import EssentialLink from 'components/EssentialLink.vue'
+<script>
+import { defineComponent, ref, computed } from "vue";
+import { useI18n } from "vue-i18n";
+import { useQuasar } from "quasar";
 
-defineOptions({
-  name: 'MainLayout'
-})
+export default defineComponent({
+  name: "MainLayout",
+  setup() {
+    const { locale } = useI18n({ useScope: "global" });
+    const $q = useQuasar();
 
-const linksList = [
-  {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev'
-  },
-  {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework'
-  },
-  {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev'
-  },
-  {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev'
-  },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev'
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev'
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev'
-  }
-]
+    const currentLang = computed(() => locale.value === "en-US" ? "English" : "繁體中文");
 
-const leftDrawerOpen = ref(false)
+    const changeLang = (lang) => {
+      locale.value = lang;
+    };
 
-function toggleLeftDrawer () {
-  leftDrawerOpen.value = !leftDrawerOpen.value
-}
+    const toggleDarkMode = () => {
+      $q.dark.toggle();
+    };
+
+    return {
+      currentLang,
+      changeLang,
+      toggleDarkMode
+    };
+  },
+});
 </script>
+
+<style lang="scss" scoped>
+.q-toolbar-title {
+  flex-grow: 1;
+}
+</style>
