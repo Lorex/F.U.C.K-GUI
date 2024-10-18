@@ -27,7 +27,10 @@
           </q-card-section>
 
           <q-card-section class="config-preview">
-            <div ref="generatedConfigEditorEl" class="ace-editor-container"></div>
+            <div
+              ref="generatedConfigEditorEl"
+              class="ace-editor-container"
+            ></div>
           </q-card-section>
         </q-card>
       </div>
@@ -78,8 +81,10 @@ export default {
     };
 
     const downloadConfig = () => {
-      const configObject = JSON.parse(generatedConfig.value.match(/module\.exports\.config = (.+?);/s)[1]);
-      const fileName = `${configObject.name || 'config'}.js`;
+      const configObject = JSON.parse(
+        generatedConfig.value.match(/module\.exports\.config = (.+?);/s)[1]
+      );
+      const fileName = `${configObject.name || "config"}.js`;
 
       const blob = new Blob([generatedConfig.value], {
         type: "application/javascript",
